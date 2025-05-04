@@ -1,230 +1,91 @@
-# Basics SQL Notes: Key Concepts & Examples
+# 🗄️ How to Set Up SQL Server and SQL Server Management Studio (SSMS)
+
+This guide will help you install **SQL Server** and **SQL Server Management Studio (SSMS)** on your Windows machine for development or learning purposes.
 
 ---
 
-## 1. Database Operations
+## 🛠 Step 1: Download SQL Server
 
-### Create Database
-```sql
-CREATE DATABASE order_db;  -- Avoid reserved keywords like "ORDER"
-CREATE DATABASE employee_db;
-```
+1. Visit the official Microsoft SQL Server download page:  
+   👉 [https://www.microsoft.com/en-us/sql-server/sql-server-downloads](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
 
-### Switch Database
-```sql
-USE employee_db;
-```
+2. Choose either:
+   - **SQL Server Developer Edition** (free, full-featured for development/testing)
+   - **SQL Server Express Edition** (lightweight, free)
 
-### Delete Database
-```sql
-DROP DATABASE employee_db;  -- Irreversible action!
-```
+3. Download and run the installer.
+
 
 ---
 
-## 2. Table Operations
+## 🧩 Step 2: Install SQL Server
 
-### Create Table
-```sql
-CREATE TABLE emp1 (
-    ID INT PRIMARY KEY,
-    NAME VARCHAR(50) NOT NULL,
-    ADDRESS VARCHAR(255),  -- Use longer length for real-world addresses
-    SALARY DECIMAL(10, 2),  -- Better for currency than INT
-    bonus FLOAT
-);
-```
+1. Choose installation type:
+   - **Basic** – Quick setup for most development needs.
+   - **Custom** – Configure advanced options.
 
-### Insert Data
-```sql
--- Insert full row
-INSERT INTO emp2 VALUES (1, 'Prakhar', 'India', 1000000, 3.5);
 
--- Insert partial data (specify columns)
-INSERT INTO emp2 (id, name, bonus) VALUES (3, 'Rahul', 4.5);
-```
 
-### Read Data
-```sql
-SELECT * FROM emp2;
-```
+2. Follow the installation wizard:
+   - Accept license terms.
+   - Choose installation location.
+   - Click **Install**.
+
+3. After installation, take note of your **instance name**:
+   - Default: `MSSQLSERVER`
+   - Express: `SQLEXPRESS`
+
+4. Configure authentication:
+   - Select **Mixed Mode Authentication** (SQL Server + Windows).
+   - Set a strong password for the **sa** (system administrator) account.
+
+
+5. Complete the installation and restart your system if prompted.
 
 ---
 
-## 3. Constraints
+## 🧮 Step 3: Download & Install SSMS
 
-### NOT NULL & UNIQUE
-```sql
-CREATE TABLE emp3 (
-    id INT,
-    email VARCHAR(128) NOT NULL,
-    phone VARCHAR(20) UNIQUE  -- Allows one NULL unless specified otherwise
-);
-```
+1. Visit the SSMS download page:  
+   👉 [https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms](https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms)
 
-### CHECK & DEFAULT
-```sql
-CREATE TABLE emp4 (
-    id INT,
-    age INT CHECK (age > 18),
-    country VARCHAR(30) DEFAULT 'INDIA'
-);
-```
+2. Download and run the SSMS installer.
 
-### Primary Key
-```sql
-CREATE TABLE emp6 (
-    id INT PRIMARY KEY,
-    email VARCHAR(30)
-);
-```
 
-### Foreign Key
-```sql
-CREATE TABLE department (
-    dept_id INT PRIMARY KEY,
-    dept_name VARCHAR(50)
-);
 
-CREATE TABLE student (
-    id INT PRIMARY KEY,
-    name VARCHAR(50),
-    dept_id INT,
-    FOREIGN KEY (dept_id) REFERENCES department(dept_id)
-);
-```
+3. Follow the setup wizard to complete the installation.
 
 ---
 
-## 4. Data Manipulation
+## 🔗 Step 4: Connect to SQL Server using SSMS
 
-### Filtering
-```sql
-SELECT * FROM employee WHERE salary > 70000;
-SELECT * FROM employee WHERE location IS NULL;
-```
+1. Launch **SQL Server Management Studio**.
 
-### Sorting
-```sql
-SELECT * FROM employee ORDER BY salary DESC;  -- High to low
-SELECT * FROM employee ORDER BY salary ASC;   -- Low to high
-```
+2. In the **Connect to Server** window:
+   - **Server Type**: `Database Engine`
+   - **Server Name**:  
+     - `localhost` *(default instance)*  
+     - or `.\SQLEXPRESS` *(for Express edition)*
+   - **Authentication**:  
+     - `Windows Authentication` *(use your current Windows login)*  
+     - or `SQL Server Authentication` *(use `sa` and your password)*
 
-### Update Data
-```sql
-UPDATE employee3 SET location = 'Jhansi' WHERE location = 'rath';
-```
 
-### Delete Data
-```sql
-DELETE FROM employee WHERE id = 4;  -- Delete specific row
-TRUNCATE TABLE employee3;  -- Remove all data, keep structure
-```
+
+3. Click **Connect**.
 
 ---
 
-## 5. Aggregations & Grouping
+## ✅ You're Ready!
 
-### Aggregate Functions
-```sql
-SELECT MAX(salary) FROM employee4;
-SELECT MIN(salary) FROM employee4;
-SELECT COUNT(id) AS total_employees FROM employee4;
-```
+You can now:
+- Create and manage databases
+- Write and run SQL queries
+- Design and test database applications locally
 
-### GROUP BY
-```sql
--- Employees per location
-SELECT location, COUNT(id) FROM employee4 GROUP BY location;
-
--- Highest salary per department
-SELECT dept, MAX(salary) FROM employee4 GROUP BY dept;
-```
-
-### HAVING Clause
-```sql
--- Departments with total salary > 1,000,000
-SELECT dept, SUM(salary) 
-FROM employee4 
-GROUP BY dept 
-HAVING SUM(salary) > 1000000;
-```
+![SSMS Working](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExczY3OTZ3c3c0dXFqZ3F6ajJiM2RlbnpnNnljMG1mbjB3bWFmZnJmNiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/VbnUQpnihPSIgIXuZv/giphy.gif)
 
 ---
 
-## 6. Advanced Queries
-
-### LIKE Operator
-```sql
-SELECT * FROM invoices WHERE description LIKE 'Wireless%';  -- Starts with
-SELECT * FROM invoices WHERE description LIKE '%DPI';        -- Ends with
-SELECT * FROM invoices WHERE description LIKE '%hub%';       -- Contains
-```
-
-### COALESCE (Handle NULLs)
-```sql
-SELECT name, COALESCE(age, 18) AS age FROM Employees33;  -- Replace NULL age with 18
-SELECT id + COALESCE(salary, 0) AS total FROM Employees33;  -- Handle NULL salary
-```
-
----
-
-## 7. Joins
-
-### Inner Join
-```sql
-SELECT e.*, d.dept_name 
-FROM Employees12 e 
-INNER JOIN Departments d ON e.dept_id = d.dept_id;
-```
-
-### Left/Right/Full Joins
-```sql
-SELECT e.*, d.dept_name 
-FROM Employees12 e 
-LEFT JOIN Departments d ON e.dept_id = d.dept_id;
-```
-
-### UNION vs UNION ALL
-```sql
--- UNION (removes duplicates)
-SELECT name FROM Employees12 
-UNION 
-SELECT dept_name FROM Departments;
-
--- UNION ALL (keeps duplicates)
-SELECT name FROM Employees12 
-UNION ALL 
-SELECT dept_name FROM Departments;
-```
-
----
-
-## 8. Table Modifications (ALTER)
-
-### Add Column
-```sql
-ALTER TABLE example1 ADD salary INT;
-```
-
-### Modify Column
-```sql
-ALTER TABLE example1 ALTER COLUMN salary VARCHAR(128);
-```
-
-### Drop Column
-```sql
-ALTER TABLE example1 DROP COLUMN salary;
-```
-
----
-
-## Key Takeaways
-
-- Use `PRIMARY KEY` for unique row identification.
-- `GROUP BY` for aggregations; `HAVING` to filter groups.
-- `JOIN` to combine data from multiple tables.
-- Handle NULLs with `COALESCE` or `IS NULL` checks.
-- Always test `DELETE`/`DROP` commands—they’re irreversible!
-
----
+Feel free to fork this guide or open an issue if you face any setup issues.  
+**Happy coding!** 💻
